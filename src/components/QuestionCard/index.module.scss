@@ -1,9 +1,10 @@
 .container {
-  background-color: pink;
+  background-color: #fff;
   width: 100%;
   margin-bottom: 20px;
   box-sizing: border-box;
   padding: 10px;
+  cursor: pointer;
 
   &:hover {
     box-shadow: 0 4px 10px #e8e8e8;

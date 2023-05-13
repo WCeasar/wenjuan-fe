@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react'
 import styles from '../common.module.scss'
 import { useTitle } from 'ahooks'
 import { Empty, Table, Typography, Tag, Space, Button } from 'antd'
+import ListSearch from '../../../components/ListSearch'
 
 const questionList = [
   {
@@ -113,7 +114,9 @@ const Trash: FC = () => {
     <div className={styles.container}>
       <header className={styles.header}>
         <Title level={3}>回收站</Title>
-        <div className={styles.right}>(搜索)</div>
+        <div className={styles.right}>
+          <ListSearch></ListSearch>
+        </div>
       </header>
 
       <div className={styles.content}>

@@ -43,7 +43,7 @@ const questionList = [
 ]
 
 const Star: FC = () => {
-  useTitle('标星问卷')
+  useTitle('react')
   const [questionArr] = useState(questionList)
 
   const { Title } = Typography

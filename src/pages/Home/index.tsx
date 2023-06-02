@@ -1,13 +1,25 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import styles from './index.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { Typography, Button } from 'antd'
 import { MANAGE_INDEX_PATHNAME } from '../../router'
+import ajax from '../../services/ajax'
 
 const Home: FC = () => {
   const { Title, Paragraph } = Typography
 
   const navigation = useNavigate()
+
+  useEffect(() => {
+    ajax
+      .get('/api/test')
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  })
 
   return (
     <div className={styles.container}>

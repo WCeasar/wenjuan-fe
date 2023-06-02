@@ -21,7 +21,7 @@ type PropsType = {
 }
 
 const QuestionCard: FC<PropsType> = (props: PropsType) => {
-  const { _id, isPublished, title, answerCount, createAt, isStar } = props
+  const { isPublished, title, answerCount, createAt, isStar } = props
   const { Link } = Typography
   const nav = useNavigate()
   const { confirm } = Modal

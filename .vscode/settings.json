@@ -1,3 +1,6 @@
 {
-  "cSpell.words": ["antd"]
+  "cSpell.words": ["antd", "craco"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

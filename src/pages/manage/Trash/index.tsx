@@ -76,7 +76,7 @@ const columns = [
 ]
 
 const Trash: FC = () => {
-  useTitle('回收站')
+  useTitle('react')
   const [questionArr] = useState(questionList)
 
   const [selectArr, setSelectArr] = useState<string[]>([])

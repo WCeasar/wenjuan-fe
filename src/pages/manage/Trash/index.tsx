@@ -1,43 +1,9 @@
 import React, { FC, useState } from 'react'
 import styles from '../common.module.scss'
 import { useTitle } from 'ahooks'
-import { Empty, Table, Typography, Tag, Space, Button } from 'antd'
+import { Empty, Table, Typography, Tag, Space, Button, Spin } from 'antd'
 import ListSearch from '../../../components/ListSearch'
-
-const questionList = [
-  {
-    _id: 'q1',
-    title: '问卷1',
-    isPublished: true,
-    isStar: true,
-    answerCount: 5,
-    createAt: '3月10日 13:23'
-  },
-  {
-    _id: 'q2',
-    title: '问卷2',
-    isPublished: false,
-    isStar: true,
-    answerCount: 5,
-    createAt: '3月10日 13:23'
-  },
-  {
-    _id: 'q3',
-    title: '问卷3',
-    isPublished: true,
-    isStar: true,
-    answerCount: 15,
-    createAt: '3月10日 13:23'
-  },
-  {
-    _id: 'q4',
-    title: '问卷4',
-    isPublished: true,
-    isStar: true,
-    answerCount: 51,
-    createAt: '3月10日 13:23'
-  }
-]
+import useLoadQuestionListData from '../../../hooks/useLoadQuestionListData'
 
 const columns = [
   {
@@ -77,11 +43,12 @@ const columns = [
 
 const Trash: FC = () => {
   useTitle('react')
-  const [questionArr] = useState(questionList)
 
   const [selectArr, setSelectArr] = useState<string[]>([])
-
   const { Title } = Typography
+
+  const { data = {}, loading = false } = useLoadQuestionListData({ isDeleted: true })
+  const { list = [], total = 0 } = data
 
   const onChange = (selectedRowKeys: string[]) => {
     console.log(selectedRowKeys)
@@ -103,7 +70,7 @@ const Trash: FC = () => {
           }
         }}
         pagination={false}
-        dataSource={questionArr}
+        dataSource={list}
         columns={columns}
         rowKey="title"
       ></Table>
@@ -120,9 +87,15 @@ const Trash: FC = () => {
       </header>
 
       <div className={styles.content}>
-        {!questionArr.length && <Empty description="暂无数据"></Empty>}
+        {loading && (
+          <div style={{ textAlign: 'center' }}>
+            <Spin></Spin>
+          </div>
+        )}
 
-        {questionArr.length && table}
+        {!loading && !list.length && <Empty description="暂无数据"></Empty>}
+
+        {!loading && list.length && table}
       </div>
 
       <footer className={styles.footer}>分页</footer>

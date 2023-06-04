@@ -1,16 +1,15 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import QuestionCard from '../../../components/QuestionCard/index'
 import styles from '../common.module.scss'
-import { useRequest, useTitle } from 'ahooks'
+import { useTitle } from 'ahooks'
 import { Empty } from 'antd'
 import { Typography, Spin } from 'antd'
 import ListSearch from '../../../components/ListSearch'
-import { getQuestionListService } from '../../../services/question'
-
+import useLoadQuestionListData from '../../../hooks/useLoadQuestionListData'
 const List: FC = () => {
   useTitle('react')
 
-  const { data = {}, loading = false } = useRequest(getQuestionListService)
+  const { data = {}, loading = false } = useLoadQuestionListData()
 
   const { list, total } = data
 

@@ -26,3 +26,19 @@ export const getQuestionListService = async (opt: Partial<questionListServicePar
   const data = (await axios.get(url, { params: opt })) as DataType
   return data
 }
+
+export const updateQuestionService = async (
+  id: string,
+  opt: Partial<questionListServiceParamsType>
+) => {
+  const url = `/api/question/${id}}`
+  const data = (await axios.patch(url, { data: opt })) as DataType
+  return data
+}
+
+export const duplicateQuestionService = async (id: string) => {
+  const url = `/api/question/duplicate/${id}`
+  const data = (await axios.post(url)) as DataType
+  console.log(data)
+  return data
+}

@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import styles from './index.module.scss'
 import { Button, Divider, Space, Tag, Typography, Popconfirm, message, Modal } from 'antd'
 import {
@@ -10,6 +10,8 @@ import {
   ExclamationCircleFilled
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
+import { useRequest } from 'ahooks'
+import { duplicateQuestionService, updateQuestionService } from '../../services/question'
 
 type PropsType = {
   _id: string
@@ -18,21 +20,67 @@ type PropsType = {
   isStar: boolean
   answerCount: number
   createAt: string
+  isDeleted: boolean
 }
 
 const QuestionCard: FC<PropsType> = (props: PropsType) => {
-  const { isPublished, title, answerCount, createAt, isStar } = props
+  const { isPublished, title, answerCount, createAt, isStar, isDeleted } = props
   const { Link } = Typography
   const nav = useNavigate()
   const { confirm } = Modal
 
-  const handleStar = () => {
-    message.success('标星成功')
-  }
+  const [_isStar, set_IsStar] = useState(isStar)
+  const { run: handleStar, loading } = useRequest(
+    async () => {
+      const res = await updateQuestionService(props._id, { ...props, isStar: !_isStar })
+      console.log(res)
+    },
+    {
+      manual: true,
+      onSuccess() {
+        set_IsStar(!_isStar)
+        message.success(!_isStar ? '标星成功' : '取消标星成功')
+      }
+    }
+  )
 
   const handleStarCancel = () => {
     message.error('标星')
   }
+
+  const { run: handleDuplicate, loading: duplicateLoading } = useRequest(
+    async () => {
+      const res = await duplicateQuestionService(props._id)
+      console.log(res)
+      return res
+    },
+    {
+      manual: true,
+      onSuccess(res) {
+        message.success('复制成功')
+        nav('/question/edit/' + res.id)
+      }
+    }
+  )
+
+  const [delState, setDelState] = useState(props.isDeleted)
+
+  const { run: delQuestion, loading: delQuestionLoading } = useRequest(
+    async () => {
+      const res = await updateQuestionService(props._id, { ...props, isDeleted: !delState })
+      console.log(res)
+      return res
+    },
+    {
+      manual: true,
+      onSuccess(res) {
+        console.log(res)
+
+        message.success('删除成功成功')
+        setDelState(true)
+      }
+    }
+  )
 
   const handleDel = () => {
     confirm({
@@ -40,17 +88,19 @@ const QuestionCard: FC<PropsType> = (props: PropsType) => {
       icon: <ExclamationCircleFilled />,
       content: '确认要删除吗',
       onOk() {
-        message.success('删除成功')
+        delQuestion()
       }
     })
   }
+
+  if (delState) return null
 
   return (
     <div className={styles.container}>
       <div className={styles.top}>
         <div className={styles.left}>
           <Space>
-            {isStar ? <StarOutlined style={{ color: 'red' }}></StarOutlined> : ''}
+            {_isStar ? <StarOutlined style={{ color: 'red' }}></StarOutlined> : ''}
             <Link
               onClick={() => {
                 isPublished ? nav('/question/stat/3') : nav('/question/edit/3')
@@ -106,14 +156,30 @@ const QuestionCard: FC<PropsType> = (props: PropsType) => {
             okText="确认"
             cancelText="取消"
           >
-            <Button size="small" type="text" icon={<StarOutlined />}>
-              {isStar ? '取消标星' : '标星'}
+            <Button size="small" type="text" icon={<StarOutlined />} loading={loading}>
+              {_isStar ? '取消标星' : '标星'}
             </Button>
           </Popconfirm>
-          <Button size="small" type="text" icon={<CopyOutlined />}>
-            复制
-          </Button>
-          <Button size="small" type="text" icon={<DeleteOutlined />} onClick={handleDel}>
+
+          <Popconfirm
+            title="温馨提示"
+            description="是否确认标星"
+            onConfirm={handleDuplicate}
+            okText="确认"
+            cancelText="取消"
+          >
+            <Button size="small" type="text" icon={<CopyOutlined />} loading={duplicateLoading}>
+              复制
+            </Button>
+          </Popconfirm>
+
+          <Button
+            size="small"
+            type="text"
+            icon={<DeleteOutlined />}
+            onClick={handleDel}
+            loading={delQuestionLoading}
+          >
             删除
           </Button>
         </div>

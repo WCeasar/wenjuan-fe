@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["antd", "craco"],
+  "cSpell.words": ["ahooks", "antd", "craco", "Popconfirm"],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   }

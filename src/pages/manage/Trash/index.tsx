@@ -1,10 +1,12 @@
 import React, { FC, useState } from 'react'
 import styles from '../common.module.scss'
-import { useTitle } from 'ahooks'
-import { Empty, Table, Typography, Tag, Space, Button, Spin } from 'antd'
+import { useRequest, useTitle } from 'ahooks'
+import { Modal, Empty, Table, Typography, Tag, Space, Button, Spin, message } from 'antd'
 import ListSearch from '../../../components/ListSearch'
 import useLoadQuestionListData from '../../../hooks/useLoadQuestionListData'
 import ListPage from '../../../components/listPage'
+import { delQuestionService, updateQuestionService } from '../../../services/question'
+import { ExclamationCircleFilled } from '@ant-design/icons'
 
 const columns = [
   {
@@ -47,8 +49,9 @@ const Trash: FC = () => {
 
   const [selectArr, setSelectArr] = useState<string[]>([])
   const { Title } = Typography
+  const { confirm } = Modal
 
-  const { data = {}, loading = false } = useLoadQuestionListData({ isDeleted: true })
+  const { data = {}, loading = false, refresh } = useLoadQuestionListData({ isDeleted: true })
   const { list = [], total = 0 } = data
 
   const onChange = (selectedRowKeys: string[]) => {
@@ -56,11 +59,84 @@ const Trash: FC = () => {
     setSelectArr(selectedRowKeys)
   }
 
+  const { run: RecoverHandle } = useRequest(
+    async () => {
+      for await (const item of selectArr) {
+        console.log(item)
+        await updateQuestionService(item, { isDeleted: false })
+      }
+    },
+    {
+      manual: true,
+      debounceWait: 500,
+      onSuccess() {
+        message.success('恢复成功')
+        refresh()
+        setSelectArr([])
+      }
+    }
+  )
+
+  const handleRecoverClick = async () => {
+    confirm({
+      title: 'Confirm',
+      icon: <ExclamationCircleFilled />,
+      content: '是否确认恢复',
+      okText: '确认',
+      cancelText: '取消',
+      async onOk() {
+        RecoverHandle()
+      }
+    })
+  }
+
+  const handleDelClick = async () => {
+    console.log(selectArr)
+
+    confirm({
+      title: 'Confirm',
+      icon: <ExclamationCircleFilled />,
+      content: '是否确认删除',
+      okText: '确认',
+      cancelText: '取消',
+      async onOk() {
+        await delHandle()
+      }
+    })
+  }
+
+  const { run: delHandle } = useRequest(
+    async () => {
+      const res = await delQuestionService(selectArr)
+      setSelectArr([])
+      refresh()
+      return res
+    },
+    {
+      manual: true,
+      debounceWait: 500
+    }
+  )
+
   const table = (
     <>
       <Space style={{ marginBottom: '10px' }}>
-        <Button disabled={!selectArr.length}>恢复</Button>
-        <Button disabled={!selectArr.length}>删除</Button>
+        <Button
+          disabled={!selectArr.length}
+          onClick={() => {
+            handleRecoverClick()
+          }}
+        >
+          恢复
+        </Button>
+        <Button
+          disabled={!selectArr.length}
+          onClick={() => {
+            handleDelClick()
+          }}
+        >
+          删除
+        </Button>
       </Space>
 
       <Table
@@ -73,7 +149,7 @@ const Trash: FC = () => {
         pagination={false}
         dataSource={list}
         columns={columns}
-        rowKey="title"
+        rowKey="_id"
       ></Table>
     </>
   )

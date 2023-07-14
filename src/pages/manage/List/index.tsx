@@ -45,6 +45,7 @@ const List: FC = () => {
     },
     {
       manual: true,
+
       onSuccess(res) {
         const { list: l = [], total = 0 } = res
         setList(list.concat(l))
@@ -67,7 +68,7 @@ const List: FC = () => {
       }
     },
     {
-      wait: 50
+      wait: 500
     }
   )
 

@@ -31,7 +31,7 @@ export const updateQuestionService = async (
   id: string,
   opt: Partial<questionListServiceParamsType>
 ) => {
-  const url = `/api/question/${id}}`
+  const url = `/api/question/${id}`
   const data = (await axios.patch(url, { data: opt })) as DataType
   return data
 }
@@ -39,6 +39,11 @@ export const updateQuestionService = async (
 export const duplicateQuestionService = async (id: string) => {
   const url = `/api/question/duplicate/${id}`
   const data = (await axios.post(url)) as DataType
-  console.log(data)
+  return data
+}
+
+export const delQuestionService = async (params: string[]) => {
+  const url = `/api/question`
+  const data = (await axios.delete(url, { data: { ids: params } })) as DataType
   return data
 }

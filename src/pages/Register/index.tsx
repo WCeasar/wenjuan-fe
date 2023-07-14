@@ -1,9 +1,11 @@
 import React, { FC } from 'react'
 import styles from './index.module.scss'
-import { Typography, Space, Button, Form, Input } from 'antd'
+import { Typography, Space, Button, Form, Input, message } from 'antd'
 import { FormOutlined } from '@ant-design/icons'
 import { LOGIN_PATHNAME } from '../../router'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useRequest } from 'ahooks'
+import { registerService } from '../../services/user'
 
 type RegisterType = {
   username: string
@@ -15,8 +17,25 @@ type RegisterType = {
 const Register: FC = () => {
   const { Title } = Typography
   const onFinish = (values: RegisterType) => {
-    console.log('Success:', values)
+    run(values)
   }
+
+  const nav = useNavigate()
+
+  const { run } = useRequest(
+    async (val) => {
+      const res = await registerService(val)
+
+      console.log(res)
+    },
+    {
+      manual: true,
+      onSuccess() {
+        message.success('注册成功')
+        nav(LOGIN_PATHNAME)
+      }
+    }
+  )
 
   return (
     <div className={styles.container}>
@@ -31,7 +50,9 @@ const Register: FC = () => {
         name="basic"
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 16 }}
-        onFinish={onFinish}
+        onFinish={(val) => {
+          onFinish(val)
+        }}
         autoComplete="off"
       >
         <Form.Item
@@ -80,16 +101,16 @@ const Register: FC = () => {
         <Form.Item label="昵称" name="nickname">
           <Input />
         </Form.Item>
-      </Form>
 
-      <Form.Item wrapperCol={{ offset: 0, span: 0 }}>
-        <Space>
-          <Button type="primary" htmlType="submit">
-            注册
-          </Button>
-          <Link to={LOGIN_PATHNAME}>已有账户，登录</Link>
-        </Space>
-      </Form.Item>
+        <Form.Item wrapperCol={{ offset: 0, span: 0 }}>
+          <Space>
+            <Button type="primary" htmlType="submit">
+              注册
+            </Button>
+            <Link to={LOGIN_PATHNAME}>已有账户，登录</Link>
+          </Space>
+        </Form.Item>
+      </Form>
     </div>
   )
 }

@@ -2,8 +2,11 @@ import React, { FC, useEffect } from 'react'
 import styles from './index.module.scss'
 import { Typography, Space, Button, Form, Input, Checkbox } from 'antd'
 import { FormOutlined } from '@ant-design/icons'
-import { REGISTER_PATHNAME } from '../../router'
-import { Link } from 'react-router-dom'
+import { MANAGE_INDEX_PATHNAME, REGISTER_PATHNAME } from '../../router'
+import { Link, useNavigate } from 'react-router-dom'
+import { useRequest } from 'ahooks'
+import { loginService } from '../../services/user'
+import { setToken } from '../../utils/user-Storage'
 
 const USERNAME_KEY = 'username'
 const PASSWORD_KEY = 'password'
@@ -41,9 +44,26 @@ const Login: FC = () => {
     form.setFieldsValue({ username, password })
   }, [])
 
+  const nav = useNavigate()
+  const { run } = useRequest(
+    async (val) => {
+      const res = await loginService(val)
+
+      return res
+    },
+    {
+      manual: true,
+      onSuccess(res) {
+        const { token } = res
+        setToken(token)
+        nav(MANAGE_INDEX_PATHNAME)
+      }
+    }
+  )
   const onFinish = (values: LoginType) => {
     const { username, password, remember } = values
     // TODO
+    run(values)
 
     if (remember) {
       rememberUser(username, password)

@@ -44,10 +44,6 @@ const QuestionCard: FC<PropsType> = (props: PropsType) => {
     }
   )
 
-  const handleStarCancel = () => {
-    message.error('标星')
-  }
-
   const { run: handleDuplicate, loading: duplicateLoading } = useRequest(
     async () => {
       const res = await duplicateQuestionService(props._id)
@@ -63,7 +59,7 @@ const QuestionCard: FC<PropsType> = (props: PropsType) => {
     }
   )
 
-  const [delState, setDelState] = useState(props.isDeleted)
+  const [delState, setDelState] = useState(isDeleted)
 
   const { run: delQuestion, loading: delQuestionLoading } = useRequest(
     async () => {
@@ -76,7 +72,7 @@ const QuestionCard: FC<PropsType> = (props: PropsType) => {
       onSuccess(res) {
         console.log(res)
 
-        message.success('删除成功成功')
+        message.success('删除成功')
         setDelState(true)
       }
     }
@@ -152,7 +148,6 @@ const QuestionCard: FC<PropsType> = (props: PropsType) => {
             title="温馨提示"
             description="是否确认标星"
             onConfirm={handleStar}
-            onCancel={handleStarCancel}
             okText="确认"
             cancelText="取消"
           >

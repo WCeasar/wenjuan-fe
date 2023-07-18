@@ -9,18 +9,18 @@ const LOGO: FC = () => {
   const { Title } = Typography
 
   const { username } = useGetUserInfo()
-  const [path, setPath] = useState(HOME_PATHNAME)
+  const [pathname, setPathname] = useState(HOME_PATHNAME)
   useEffect(() => {
     if (username) {
-      setPath(MANAGE_INDEX_PATHNAME)
+      setPathname(MANAGE_INDEX_PATHNAME)
     } else {
-      setPath(HOME_PATHNAME)
+      setPathname(HOME_PATHNAME)
     }
   }, [username])
 
   return (
     <div className={styles.container}>
-      <Link to={path}>
+      <Link to={pathname}>
         <Space>
           <Title>
             <FormOutlined></FormOutlined>

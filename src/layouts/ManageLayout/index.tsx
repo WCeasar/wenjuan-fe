@@ -5,10 +5,13 @@ import { Button, Space, Divider, message } from 'antd'
 import { PlusOutlined, BarsOutlined, StarOutlined, DeleteOutlined } from '@ant-design/icons'
 import { createQuestionService } from '../../services/question'
 import { useRequest } from 'ahooks'
+import { useLoadUserInfoData } from '../../hooks/useLoadUserInfoData'
 
 const ManageLayout: FC = () => {
   const { pathname } = useLocation()
   const nav = useNavigate()
+
+  useLoadUserInfoData()
 
   const { loading, run: handleCreateClick } = useRequest(createQuestionService, {
     manual: true,

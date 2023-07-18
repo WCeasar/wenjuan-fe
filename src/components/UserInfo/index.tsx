@@ -7,7 +7,7 @@ import { UserOutlined } from '@ant-design/icons'
 import { removeToken } from '../../utils/user-Storage'
 import { useGetUserInfo } from '../../hooks/useGetUserInfo'
 import { useDispatch } from 'react-redux'
-import { logoutReducer } from '../../store/user'
+import { logoutReducer } from '../../store/userReducer'
 
 const UserInfo: FC = () => {
   const { Link: Link1 } = Typography

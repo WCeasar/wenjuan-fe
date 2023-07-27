@@ -7,12 +7,13 @@ import { loginReducer } from '../store/userReducer'
 import { getToken } from '../utils/user-Storage'
 
 export const useLoadUserInfoData = () => {
-  const [isGetUserLoading, setIsGetUserInfoLoading] = useState(true)
+  const [isGetUserLoading, setIsGetUserInfoLoading] = useState(false)
   const dispatch = useDispatch()
   const { username } = useGetUserInfo()
 
   const { run } = useRequest(
     () => {
+      setIsGetUserInfoLoading(true)
       return getUserInfoService()
     },
     {

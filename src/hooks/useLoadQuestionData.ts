@@ -1,15 +1,41 @@
 import { useParams } from 'react-router-dom'
 import { getQuestionService } from '../services/question'
 import { useRequest } from 'ahooks'
-import { useCallback } from 'react'
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { resetComponents } from '../store/componentsReducer'
 
 const useLoadQuestionData = () => {
   const { id = '' } = useParams() || {}
 
-  const memoizedFn = useCallback(async () => {
-    return await getQuestionService(id)
+  const {
+    data = {},
+    loading,
+    error,
+    run
+  } = useRequest(
+    async (id) => {
+      return await getQuestionService(id)
+    },
+    {
+      manual: true
+    }
+  )
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (!data) return
+
+    const { title = '', componentList = [] } = data
+    console.log(title)
+    dispatch(resetComponents(componentList))
+  }, [data])
+
+  useEffect(() => {
+    run(id)
   }, [id])
-  const { data, loading, error } = useRequest(memoizedFn)
+
   return { data, loading, error }
 }
 

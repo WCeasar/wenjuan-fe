@@ -1,0 +1,21 @@
+.canvas {
+  background-color: #fff;
+  min-height: 100%;
+  overflow: hidden;
+
+  .component-wrapper {
+    border: 1px solid #fff;
+    border-radius: 3px;
+    margin: 12px;
+    padding: 12px;
+    cursor: pointer;
+
+    &:hover {
+      border-color: #d6d6d6;
+    }
+  }
+
+  .component {
+    pointer-events: none;
+  }
+}

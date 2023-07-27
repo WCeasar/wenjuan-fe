@@ -8,16 +8,15 @@ import {
   isNoNeedUserInfo
 } from '../router'
 
-export const usePageNav = (isGetUserInfoLoading: boolean) => {
+export const usePageNav = async (isGetUserInfoLoading: boolean) => {
   const { pathname } = useLocation()
   const { username } = useGetUserInfo()
   const nav = useNavigate()
 
   useEffect(() => {
     if (isGetUserInfoLoading) return
-
     // 如果登陆了
-    if (username) {
+    if (username || localStorage.getItem('username')) {
       // 如果跳转的时登录注册页
       if (isLoginOrRegister(pathname)) {
         nav(MANAGE_INDEX_PATHNAME)

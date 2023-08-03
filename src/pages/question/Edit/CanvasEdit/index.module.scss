@@ -18,4 +18,13 @@
   .component {
     pointer-events: none;
   }
+
+  .selected {
+    border-color: blue !important;
+  }
+
+  .Locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }

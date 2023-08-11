@@ -1,18 +1,26 @@
 import React, { FC } from 'react'
 import { Space, Button, Tooltip } from 'antd'
-import { DeleteOutlined, EyeInvisibleOutlined, LockOutlined } from '@ant-design/icons'
+import {
+  CopyOutlined,
+  CopyrightCircleOutlined,
+  DeleteOutlined,
+  EyeInvisibleOutlined,
+  LockOutlined
+} from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import {
   removeSelectQuestionComponent,
   hiddenSelectQuestionComponent,
-  lockedSelectQuestionComponent
+  lockedSelectQuestionComponent,
+  copyComponentHandler,
+  pasteComponentHandler
 } from '../../../../store/componentsReducer'
 import useGetComponentInfo from '../../../../hooks/useGetComponentInfo'
 
 const EditTools: FC = () => {
   const dispatch = useDispatch()
 
-  const { selectedComponent } = useGetComponentInfo()
+  const { selectedComponent, copyComponent } = useGetComponentInfo()
 
   const handleDeleteQuestion = () => {
     dispatch(removeSelectQuestionComponent())
@@ -25,10 +33,22 @@ const EditTools: FC = () => {
   const handleLockedInvisibleQuestion = () => {
     dispatch(lockedSelectQuestionComponent())
   }
+  const handleCopyQuestion = () => {
+    dispatch(copyComponentHandler())
+  }
+
+  const handlePasteQuestion = () => {
+    dispatch(pasteComponentHandler())
+  }
   return (
     <Space>
       <Tooltip title="删除">
-        <Button icon={<DeleteOutlined />} shape="circle" onClick={handleDeleteQuestion}></Button>
+        <Button
+          disabled={!selectedComponent}
+          icon={<DeleteOutlined />}
+          shape="circle"
+          onClick={handleDeleteQuestion}
+        ></Button>
       </Tooltip>
       <Tooltip title="隐藏">
         <Button
@@ -43,6 +63,17 @@ const EditTools: FC = () => {
           shape="circle"
           type={selectedComponent?.isLocked ? 'primary' : 'default'}
           onClick={handleLockedInvisibleQuestion}
+        ></Button>
+      </Tooltip>
+      <Tooltip title="复制">
+        <Button icon={<CopyOutlined />} shape="circle" onClick={handleCopyQuestion}></Button>
+      </Tooltip>
+      <Tooltip title="粘贴">
+        <Button
+          disabled={!copyComponent}
+          icon={<CopyrightCircleOutlined />}
+          shape="circle"
+          onClick={handlePasteQuestion}
         ></Button>
       </Tooltip>
     </Space>

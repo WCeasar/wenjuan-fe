@@ -1,7 +1,9 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit'
 import { QuestionPropsType } from '../../components/questionComponent'
 import produce from 'immer'
 import { getNextSelectId } from '../../utils/getNextSelectId'
+import { addNewComponent } from '../../utils/addStoreNewComponent'
+import _ from 'lodash'
 
 /** 单个组件的消息类型 */
 export type ComponentType = {
@@ -17,11 +19,13 @@ export type ComponentType = {
 export type ComponentsStateType = {
   componentList: ComponentType[]
   selectedId: string
+  copyComponent: ComponentType | null
 }
 
 const INIT_STATE: ComponentsStateType = {
   componentList: [],
-  selectedId: ''
+  selectedId: '',
+  copyComponent: null
 }
 
 const componentReducer = createSlice({
@@ -34,7 +38,6 @@ const componentReducer = createSlice({
     },
 
     changeSelectedId: produce((draft: ComponentsStateType, action: PayloadAction<string>) => {
-      console.log(action.payload)
       draft.selectedId = action.payload
     }),
 
@@ -42,15 +45,7 @@ const componentReducer = createSlice({
       // 当前要添加的组件
       const newComponent = action.payload
 
-      // 找到当前组件在组件列表中的索引
-      const index = draft.componentList.findIndex((item) => item.fe_id === draft.selectedId)
-
-      if (index < 0) {
-        // 当前没有选中组件
-        draft.componentList.push(newComponent)
-      } else {
-        draft.componentList.splice(index + 1, 0, newComponent)
-      }
+      addNewComponent(draft, newComponent)
     }),
 
     changeSelectComponentProp: produce(
@@ -70,7 +65,7 @@ const componentReducer = createSlice({
     removeSelectQuestionComponent: produce((draft: ComponentsStateType) => {
       // eslint-disable-next-line
       let { componentList, selectedId } = draft
-
+      if (!selectedId) return
       const index = componentList.findIndex((item) => item.fe_id === selectedId)
 
       const nextId = getNextSelectId(componentList, index)
@@ -103,6 +98,24 @@ const componentReducer = createSlice({
       let { componentList, selectedId } = draft
       const index = componentList.findIndex((item) => item.fe_id === selectedId)
       componentList[index].isLocked = !componentList[index].isLocked
+    }),
+
+    copyComponentHandler: produce((draft: ComponentsStateType) => {
+      const { componentList, selectedId } = draft
+
+      const selectComponent = componentList.find((item) => item.fe_id === selectedId)
+      console.log(selectComponent, 'selectComponent')
+      if (selectComponent) {
+        draft.copyComponent = _.cloneDeep(selectComponent)
+      }
+    }),
+
+    pasteComponentHandler: produce((draft: ComponentsStateType) => {
+      const newComponent = draft.copyComponent
+      if (newComponent) {
+        newComponent.fe_id = nanoid()
+        addNewComponent(draft, newComponent)
+      }
     })
   }
 })
@@ -114,7 +127,9 @@ export const {
   changeSelectComponentProp,
   removeSelectQuestionComponent,
   hiddenSelectQuestionComponent,
-  lockedSelectQuestionComponent
+  lockedSelectQuestionComponent,
+  copyComponentHandler,
+  pasteComponentHandler
 } = componentReducer.actions
 
 export default componentReducer.reducer

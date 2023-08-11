@@ -6,6 +6,7 @@ import { getConfByType } from '../../../../components/questionComponent'
 import { useDispatch } from 'react-redux'
 import { changeSelectedId } from '../../../../store/componentsReducer/index'
 import classnames from 'classnames'
+import { useCanvasKeys } from '../../../../hooks/useCanvasKeys'
 
 type PropsType = {
   loading: boolean
@@ -23,8 +24,8 @@ const getComponentByType = (item) => {
 }
 
 const CanvasEdit: FC<PropsType> = ({ loading }) => {
-  const { componentList, selectedId, selectedComponent } = useGetComponentInfo()
-
+  const { componentList, selectedId } = useGetComponentInfo()
+  useCanvasKeys()
   if (loading) {
     return (
       <div style={{ textAlign: 'center', marginTop: '200px' }}>

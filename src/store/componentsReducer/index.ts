@@ -116,6 +116,26 @@ const componentReducer = createSlice({
         newComponent.fe_id = nanoid()
         addNewComponent(draft, newComponent)
       }
+    }),
+    prevComponent: produce((draft: ComponentsStateType) => {
+      const { componentList, selectedId } = draft
+
+      const index = componentList.findIndex((item) => item.fe_id === selectedId)
+
+      if (index < 0) return
+      if (index <= 0) return
+
+      draft.selectedId = componentList[index - 1].fe_id
+    }),
+    nextComponent: produce((draft: ComponentsStateType) => {
+      const { componentList, selectedId } = draft
+
+      const index = componentList.findIndex((item) => item.fe_id === selectedId)
+
+      if (index < 0) return
+      if (index === componentList.length - 1) return
+
+      draft.selectedId = componentList[index + 1].fe_id
     })
   }
 })
@@ -129,7 +149,9 @@ export const {
   hiddenSelectQuestionComponent,
   lockedSelectQuestionComponent,
   copyComponentHandler,
-  pasteComponentHandler
+  pasteComponentHandler,
+  prevComponent,
+  nextComponent
 } = componentReducer.actions
 
 export default componentReducer.reducer

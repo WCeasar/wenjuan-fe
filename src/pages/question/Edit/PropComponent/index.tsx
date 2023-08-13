@@ -20,6 +20,8 @@ const PropComponent: FC = () => {
   const { propComponent: Component } = getConfByType(type)
 
   const handleChange = (value) => {
+    console.log(value, 'qqq')
+
     dispatch(changeSelectComponentProp({ id: selectedComponent.fe_id, newProp: value }))
   }
 

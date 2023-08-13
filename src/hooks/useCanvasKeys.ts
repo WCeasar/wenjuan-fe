@@ -3,7 +3,9 @@ import { useDispatch } from 'react-redux'
 import {
   copyComponentHandler,
   pasteComponentHandler,
-  removeSelectQuestionComponent
+  removeSelectQuestionComponent,
+  prevComponent,
+  nextComponent
 } from '../store/componentsReducer'
 
 const isActiveElement = () => {
@@ -30,5 +32,15 @@ export const useCanvasKeys = () => {
   useKeyPress(['ctrl.v', 'meta.v'], () => {
     if (!isActiveElement()) return
     dispatch(pasteComponentHandler())
+  })
+
+  useKeyPress('uparrow', () => {
+    if (!isActiveElement()) return
+    dispatch(prevComponent())
+  })
+
+  useKeyPress('downarrow', () => {
+    if (!isActiveElement()) return
+    dispatch(nextComponent())
   })
 }

@@ -1,4 +1,4 @@
-import Component from '.'
+import Component from './component'
 import PropComponent from './PropComponent'
 import { questionParagraphDefaultProps } from './interface'
 

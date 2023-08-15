@@ -20,7 +20,6 @@ const PropComponent: FC<QuestionParagraphPropsType> = (props: QuestionParagraphP
 
   const onValuesChange = () => {
     if (onchange) {
-      console.log(3123)
       onchange(form.getFieldsValue())
     }
   }

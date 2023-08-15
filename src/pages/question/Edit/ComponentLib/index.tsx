@@ -30,7 +30,12 @@ const ComponentLib: FC = () => {
     }
 
     return (
-      <div key={type} className={styles['component-wrapper']} onClick={handleAddComponent}>
+      <div
+        key={type}
+        style={{ background: '#f1f1f1' }}
+        className={styles['component-wrapper']}
+        onClick={handleAddComponent}
+      >
         <div className={styles['component']}>
           <Component></Component>
         </div>

@@ -11,98 +11,98 @@ const PropComponent: FC<QuestionRadioPropsType> = (props: QuestionRadioPropsType
   const [form] = useForm()
 
   useEffect(() => {
-    form.set
+    form.setFieldsValue({ title, value, options, isVertical })
   }, [title, value, options, isVertical])
 
   const handleValueChange = () => {
     if (!onchange) return
-
-    const newValue = form.getFieldsValue()
-
-    let { options = [] } = newValue as QuestionRadioPropsType
-
-    options = options.filter((item) => !!item.text)
-
-    options.forEach((item) => {
-      if (item.value) {
+    const newValue = form.getFieldsValue() as QuestionRadioPropsType
+    newValue.options?.forEach((item) => {
+      if (!item.value) {
         item.value = nanoid(5)
       }
     })
 
-    console.log(newValue)
+    console.log(newValue, 'newValue')
 
     onchange(newValue)
   }
 
   return (
-    <Form
-      layout="vertical"
-      initialValues={{ title, value, options, isVertical }}
-      disabled={disabled}
-      form={form}
-      onValuesChange={handleValueChange}
-    >
-      <Form.Item label="标题" name="title">
-        <Input></Input>
-      </Form.Item>
+    <>
+      <Form
+        layout="vertical"
+        initialValues={{ title, value, options, isVertical }}
+        disabled={disabled}
+        form={form}
+        onValuesChange={handleValueChange}
+      >
+        <Form.Item label="标题" name="title">
+          <Input></Input>
+        </Form.Item>
 
-      <Form.List name="options">
-        {(fields, { add, remove }) => (
-          <>
-            {fields.map((field) => (
-              <Space key={field.key} align="baseline">
-                <Form.Item
-                  name={[field.name, 'text']}
-                  rules={[
-                    { required: true, message: '选项不能为空' },
-                    {
-                      validator(_, value) {
-                        const { options } = form.getFieldsValue()
-                        let num = 0
-                        options.forEach((item) => {
-                          if (item.text === value) num++
-                        })
+        <Form.List name="options">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name }) => {
+                return (
+                  <Space key={key} align="baseline">
+                    <Form.Item
+                      name={[name, 'text']}
+                      rules={[
+                        { required: true, message: '选项不能为空' },
+                        {
+                          validator(_, value) {
+                            const { options } = form.getFieldsValue()
+                            let num = 0
+                            options.forEach((item) => {
+                              if (item.text === value) num++
+                            })
 
-                        if (num > 1) {
-                          return Promise.reject(new Error('有相同选项'))
-                        } else {
-                          return Promise.resolve()
+                            if (!value) return Promise.resolve()
+
+                            if (num > 1) {
+                              return Promise.reject(new Error('有相同选项'))
+                            } else {
+                              return Promise.resolve()
+                            }
+                          }
                         }
-                      }
-                    }
-                  ]}
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+
+                    {fields.length > 2 && <MinusCircleOutlined onClick={() => remove(name)} />}
+                  </Space>
+                )
+              })}
+
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add({ text: '', value: '' })}
+                  block
+                  icon={<PlusOutlined />}
                 >
-                  <Input />
-                </Form.Item>
+                  新增
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
 
-                <MinusCircleOutlined onClick={() => remove(field.name)} />
-              </Space>
-            ))}
+        <Form.Item label="默认值" name="value">
+          <Select
+            options={options.map((item) => ({ label: item.text || '', value: item.value || '' }))}
+          ></Select>
+        </Form.Item>
 
-            <Form.Item>
-              <Button
-                type="dashed"
-                onClick={() => add({ text: '', value: '' })}
-                block
-                icon={<PlusOutlined />}
-              >
-                新增
-              </Button>
-            </Form.Item>
-          </>
-        )}
-      </Form.List>
-
-      <Form.Item label="默认值" name="value">
-        <Select
-          options={options.map((item) => ({ label: item.text || '', value: item.value || '' }))}
-        ></Select>
-      </Form.Item>
-
-      <Form.Item name="isVertical" valuePropName="checked">
-        <Checkbox>是否垂直</Checkbox>
-      </Form.Item>
-    </Form>
+        <Form.Item name="isVertical" valuePropName="checked">
+          <Checkbox>是否垂直</Checkbox>
+        </Form.Item>
+      </Form>
+    </>
   )
 }
 

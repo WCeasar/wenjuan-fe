@@ -1,4 +1,4 @@
-interface OptionType {
+type OptionType = {
   text: string
   value: string
 }
@@ -8,7 +8,6 @@ export interface QuestionRadioPropsType {
   isVertical?: boolean
   options?: OptionType[]
   value?: string
-
   onchange?: (value: QuestionRadioPropsType) => void
   disabled?: boolean
 }

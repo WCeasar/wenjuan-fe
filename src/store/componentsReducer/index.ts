@@ -75,30 +75,45 @@ const componentReducer = createSlice({
     }),
 
     hiddenSelectQuestionComponent: produce(
-      (draft: ComponentsStateType, action: PayloadAction<{ isHidden: boolean }>) => {
+      (
+        draft: ComponentsStateType,
+        action: PayloadAction<{ fe_id?: string; isHidden: boolean }>
+      ) => {
+        if (action.payload.isHidden === undefined) return
         // eslint-disable-next-line
         let { componentList, selectedId } = draft
-
-        const index = componentList.findIndex((item) => item.fe_id === selectedId)
-
-        let nextId
-        if (action.payload.isHidden) {
-          nextId = getNextSelectId(componentList, index)
+        let index
+        if (action.payload.fe_id) {
+          index = componentList.findIndex((item) => item.fe_id === action.payload.fe_id)
         } else {
-          nextId = selectedId
+          index = componentList.findIndex((item) => item.fe_id === selectedId)
         }
-
-        console.log(nextId, nextId)
         componentList[index].isHidden = action.payload.isHidden
-        draft.selectedId = nextId
+
+        if (!action.payload.fe_id || action.payload.fe_id === selectedId) {
+          let nextId
+          if (action.payload.isHidden) {
+            nextId = getNextSelectId(componentList, index)
+          } else {
+            nextId = selectedId
+          }
+          draft.selectedId = nextId
+        }
       }
     ),
-    lockedSelectQuestionComponent: produce((draft: ComponentsStateType) => {
-      // eslint-disable-next-line
-      let { componentList, selectedId } = draft
-      const index = componentList.findIndex((item) => item.fe_id === selectedId)
-      componentList[index].isLocked = !componentList[index].isLocked
-    }),
+    lockedSelectQuestionComponent: produce(
+      (draft: ComponentsStateType, action: PayloadAction<{ fe_id?: string }>) => {
+        // eslint-disable-next-line
+        let { componentList, selectedId } = draft
+        let index
+        if (action.payload.fe_id) {
+          index = componentList.findIndex((item) => item.fe_id === action.payload.fe_id)
+        } else {
+          index = componentList.findIndex((item) => item.fe_id === selectedId)
+        }
+        componentList[index].isLocked = !componentList[index].isLocked
+      }
+    ),
 
     copyComponentHandler: produce((draft: ComponentsStateType) => {
       const { componentList, selectedId } = draft
@@ -136,7 +151,21 @@ const componentReducer = createSlice({
       if (index === componentList.length - 1) return
 
       draft.selectedId = componentList[index + 1].fe_id
-    })
+    }),
+    changeSelectedComTitle: produce(
+      (draft: ComponentsStateType, action: PayloadAction<{ title: string }>) => {
+        const { componentList, selectedId } = draft
+        const { title } = action.payload
+
+        if (!selectedId) return
+
+        const curCom = componentList.find((item) => item.fe_id === selectedId)
+
+        if (curCom) {
+          curCom.title = title
+        }
+      }
+    )
   }
 })
 
@@ -151,7 +180,8 @@ export const {
   copyComponentHandler,
   pasteComponentHandler,
   prevComponent,
-  nextComponent
+  nextComponent,
+  changeSelectedComTitle
 } = componentReducer.actions
 
 export default componentReducer.reducer

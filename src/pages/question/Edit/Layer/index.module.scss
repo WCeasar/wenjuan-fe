@@ -1,0 +1,33 @@
+.wrapper {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 12px 0px;
+  border-bottom: 1px solid #f0f0f0;
+
+  .left {
+    flex: auto;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .selected {
+    color: #1fffff !important;
+  }
+
+  .handler {
+    width: 50px;
+
+    .btn {
+      opacity: 0.3;
+    }
+  }
+
+  &:hover {
+    .handler {
+      .btn {
+        opacity: 1;
+      }
+    }
+  }
+}

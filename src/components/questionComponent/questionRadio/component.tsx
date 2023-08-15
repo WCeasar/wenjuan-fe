@@ -10,8 +10,8 @@ const QuestionRadio: FC<QuestionRadioPropsType> = (props: QuestionRadioPropsType
     <div>
       <Paragraph style={{ fontWeight: 'bold' }}>{title}</Paragraph>
       <div>
-        <Space direction={isVertical ? 'vertical' : 'horizontal'}>
-          <Radio.Group value={value}>
+        <Radio.Group value={value}>
+          <Space direction={isVertical ? 'vertical' : 'horizontal'}>
             {options?.map((item) => {
               return (
                 <Radio key={item.value} value={item.value}>
@@ -19,8 +19,8 @@ const QuestionRadio: FC<QuestionRadioPropsType> = (props: QuestionRadioPropsType
                 </Radio>
               )
             })}
-          </Radio.Group>
-        </Space>
+          </Space>
+        </Radio.Group>
       </div>
     </div>
   )

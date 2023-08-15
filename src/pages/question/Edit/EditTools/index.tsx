@@ -20,7 +20,7 @@ import useGetComponentInfo from '../../../../hooks/useGetComponentInfo'
 const EditTools: FC = () => {
   const dispatch = useDispatch()
 
-  const { selectedComponent, copyComponent } = useGetComponentInfo()
+  const { selectedComponent, copyComponent, selectedId } = useGetComponentInfo()
 
   const handleDeleteQuestion = () => {
     dispatch(removeSelectQuestionComponent())
@@ -31,7 +31,7 @@ const EditTools: FC = () => {
   }
 
   const handleLockedInvisibleQuestion = () => {
-    dispatch(lockedSelectQuestionComponent())
+    dispatch(lockedSelectQuestionComponent({}))
   }
   const handleCopyQuestion = () => {
     dispatch(copyComponentHandler())
@@ -52,6 +52,7 @@ const EditTools: FC = () => {
       </Tooltip>
       <Tooltip title="隐藏">
         <Button
+          disabled={!selectedId}
           icon={<EyeInvisibleOutlined />}
           shape="circle"
           onClick={handleEyeInvisibleQuestion}
